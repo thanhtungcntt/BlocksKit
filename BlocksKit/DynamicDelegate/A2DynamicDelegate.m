@@ -323,7 +323,6 @@ static Protocol *a2_classProtocol(Class _cls, NSString *suffix, NSString *descri
 		cls = class_getSuperclass(cls);
 	}
 
-	NSCAssert(NO, @"Specify protocol explicitly: could not determine %@ protocol for class %@ (tried <%@>)", description, NSStringFromClass(_cls), [NSStringFromClass(_cls) stringByAppendingString:suffix]);
 	return nil;
 }
 

@@ -229,7 +229,7 @@ typedef A2DynamicDelegate *(^A2GetDynamicDelegateBlock)(NSObject *, BOOL);
 		infoAsPtr = (__bridge void *)[map objectForKey:protocol];
 		cls = [cls superclass];
 	}
-	NSCAssert(infoAsPtr != NULL, @"Class %@ not assigned dynamic delegate for protocol %@", NSStringFromClass(self), NSStringFromProtocol(protocol));
+	// NSCAssert(infoAsPtr != NULL, @"Class %@ not assigned dynamic delegate for protocol %@", NSStringFromClass(self), NSStringFromProtocol(protocol));
 	return infoAsPtr;
 }
 
@@ -250,14 +250,14 @@ typedef A2DynamicDelegate *(^A2GetDynamicDelegateBlock)(NSObject *, BOOL);
 	[dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *propertyName, NSString *selectorName, BOOL *stop) {
 		const char *name = propertyName.UTF8String;
 		objc_property_t property = class_getProperty(self, name);
-		NSCAssert(property, @"Property \"%@\" does not exist on class %s", propertyName, class_getName(self));
+		// NSCAssert(property, @"Property \"%@\" does not exist on class %s", propertyName, class_getName(self));
 
 		char *dynamic = property_copyAttributeValue(property, "D");
-		NSCAssert2(dynamic, @"Property \"%@\" on class %s must be backed with \"@dynamic\"", propertyName, class_getName(self));
+		// NSCAssert2(dynamic, @"Property \"%@\" on class %s must be backed with \"@dynamic\"", propertyName, class_getName(self));
 		free(dynamic);
 
 		char *copy = property_copyAttributeValue(property, "C");
-		NSCAssert2(copy, @"Property \"%@\" on class %s must be defined with the \"copy\" attribute", propertyName, class_getName(self));
+		// NSCAssert2(copy, @"Property \"%@\" on class %s must be defined with the \"copy\" attribute", propertyName, class_getName(self));
 		free(copy);
 
 		SEL selector = NSSelectorFromString(selectorName);
@@ -274,7 +274,7 @@ typedef A2DynamicDelegate *(^A2GetDynamicDelegateBlock)(NSObject *, BOOL);
 		});
 
 		if (!class_addMethod(self, getter, getterImplementation, "@@:")) {
-			NSCAssert(NO, @"Could not implement getter for \"%@\" property.", propertyName);
+			// NSCAssert(NO, @"Could not implement getter for \"%@\" property.", propertyName);
 		}
 
 		IMP setterImplementation = imp_implementationWithBlock(^(NSObject *delegatingObject, id block) {
@@ -283,7 +283,7 @@ typedef A2DynamicDelegate *(^A2GetDynamicDelegateBlock)(NSObject *, BOOL);
 		});
 
 		if (!class_addMethod(self, setter, setterImplementation, "v@:@")) {
-			NSCAssert(NO, @"Could not implement setter for \"%@\" property.", propertyName);
+			// NSCAssert(NO, @"Could not implement setter for \"%@\" property.", propertyName);
 		}
 	}];
 }
@@ -347,6 +347,16 @@ typedef A2DynamicDelegate *(^A2GetDynamicDelegateBlock)(NSObject *, BOOL);
 
 		addMethodWithIMP(self, getter, NULL, getterImplementation, "@@:", NO);
 	}
+}
+
++ (void)bk_registerDynamicDelegateWithProtocol:(Protocol *)protocol
+{
+    [self bk_registerDynamicDelegateNamed:@"delegate" protocol:protocol];
+}
+
++ (void)bk_registerDynamicDelegateNamed:(NSString *)delegateName protocol:(Protocol *)protocol
+{
+    [self bk_registerDynamicDelegateNamed:delegateName forProtocol:protocol];
 }
 
 - (id)bk_ensuredDynamicDelegate

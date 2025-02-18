@@ -78,6 +78,8 @@ NS_ASSUME_NONNULL_BEGIN
 /** Registers a dynamic delegate replacement using the property name `delegate`
  and the protocol name `FooBarDelegate` for an instance of `FooBar`. */
 + (void)bk_registerDynamicDelegate;
++ (void)bk_registerDynamicDelegateWithProtocol:(Protocol *)protocol;                            // Add this line
++ (void)bk_registerDynamicDelegateNamed:(NSString *)delegateName protocol:(Protocol *)protocol; // Add this line
 
 /** Registers a dynamic data source replacement using the given property name
  and the protocol name `FooBarDataSource` for an instance of `FooBar`.
@@ -107,7 +109,7 @@ NS_ASSUME_NONNULL_BEGIN
  @see bk_dynamicDelegate:
  @return A dynamic delegate.
  */
-@property (NS_NONATOMIC_IOSONLY, readonly, strong) id bk_ensuredDynamicDelegate;
+@property(NS_NONATOMIC_IOSONLY, readonly, strong) id bk_ensuredDynamicDelegate;
 
 /** Creates or gets a dynamic protocol implementation, assuring that it is
  assigned to the delegate property correspending to that protocol
